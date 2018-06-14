@@ -5,6 +5,7 @@ import (
 	"Exchanger/models"
 	"Exchanger/server/dbclient"
 	"database/sql"
+	"errors"
 	"github.com/nu7hatch/gouuid"
 )
 
@@ -42,6 +43,9 @@ func GetUsers(userId string) ([]models.User, error) {
 	}
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
+	}
+	if len(users) == 0 {
+		return nil, errors.New("not found")
 	}
 	return users, nil
 }

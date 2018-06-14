@@ -25,10 +25,11 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	userId := vars["user_id"]
 	user, err := dal.GetUsers(userId)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
 		return
 	}
-	common.WriteResponse(w, user)
+	common.WriteResponse(w, user[0])
 }
 
 

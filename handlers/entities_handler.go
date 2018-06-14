@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 	"Exchanger/dal"
-	"encoding/json"
+	"Exchanger/common"
 	"github.com/gorilla/mux"
 )
 
@@ -15,14 +15,7 @@ func ListEntities(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	resp, err := json.Marshal(res)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	common.WriteResponse(w, res)
 }
 
 // GetEntity gets the entity by id
@@ -35,12 +28,5 @@ func GetEntity(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	resp, err := json.Marshal(res)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	common.WriteResponse(w, res[0])
 }

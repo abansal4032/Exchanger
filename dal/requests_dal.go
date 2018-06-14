@@ -5,18 +5,8 @@ import (
 	"Exchanger/models"
 	"Exchanger/server/dbclient"
 	"database/sql"
+	"errors"
 )
-//
-//type Requests struct {
-//	RequestID        string `json:"requestId"`
-//	EntityID         string `json:"entityId"`
-//	Requester        string `json:"requester"`
-//	Intent           string `json:"intent"`
-//	DurationInDays   int    `json:"durationInDays"`
-//	Status           string `json:"status"`
-//	RequesterComment string `json:"requesterComment"`
-//	OwnerComment     string `json:"ownerComment"`
-//}
 
 const (
 	GET_REQUESTS = ` select request_id RequestId, entity_id EntityId, requester Requester, intent Intent, duration_in_days DurationInDays, status Status, requester_comment RequesterComment, owner_comment OwnerComment from requests `
@@ -52,6 +42,9 @@ func GetRequests(requestId string) ([]models.Requests, error) {
 	}
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
+	}
+	if len(requests) == 0 {
+		return nil, errors.New("not found")
 	}
 	return requests, nil
 }

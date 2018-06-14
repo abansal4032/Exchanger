@@ -11,7 +11,8 @@ import (
 func ListRequests(w http.ResponseWriter, r *http.Request) {
 	requests, err := dal.GetRequests("")
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	common.WriteResponse(w, requests)
@@ -23,9 +24,10 @@ func GetRequest(w http.ResponseWriter, r *http.Request) {
 	requestId := vars["request_id"]
 	request, err := dal.GetRequests(requestId)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
 		return
 	}
-	common.WriteResponse(w, request)
+	common.WriteResponse(w, request[0])
 }
 
