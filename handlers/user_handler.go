@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"net/http"
+	"Exchanger/common"
+	"Exchanger/dal"
 	"Exchanger/models"
 	"encoding/json"
-	"Exchanger/dal"
-	"Exchanger/common"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 // ListUsers lists the users
@@ -31,7 +31,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	common.WriteResponse(w, user[0])
 }
-
 
 // CreateUser creates a new user entity
 func CreateUser(w http.ResponseWriter, r *http.Request) {

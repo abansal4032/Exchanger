@@ -1,11 +1,11 @@
 package dal
 
 import (
-	"log"
 	"Exchanger/models"
 	"Exchanger/server/dbclient"
 	"database/sql"
 	"errors"
+	"log"
 )
 
 const (

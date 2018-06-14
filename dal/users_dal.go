@@ -1,12 +1,12 @@
 package dal
 
 import (
-	"log"
 	"Exchanger/models"
 	"Exchanger/server/dbclient"
 	"database/sql"
 	"errors"
 	"github.com/nu7hatch/gouuid"
+	"log"
 )
 
 const (
@@ -57,7 +57,7 @@ func CreateUser(user *models.User) error {
 		return err
 	}
 	defer tx.Rollback()
-	_, err = tx.Exec("INSERT INTO `user` (`user_id`, `name`, `contact_number`, `email`, `location`, `credits`)" +
+	_, err = tx.Exec("INSERT INTO `user` (`user_id`, `name`, `contact_number`, `email`, `location`, `credits`)"+
 		"VALUES (?, ?, ?, ?, ?, ?)", id.String(), user.Name, user.Contact, user.Email, user.Location, user.Credits)
 	if err != nil {
 		return err

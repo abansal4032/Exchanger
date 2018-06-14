@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"net/http"
-	"Exchanger/dal"
 	"Exchanger/common"
+	"Exchanger/dal"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 // ListEntities lists the entities

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"flag"
-	"io/ioutil"
-	"encoding/json"
 	"Exchanger/server"
 	"Exchanger/server/dbclient"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
 )
 
 var (
@@ -42,7 +42,6 @@ func loadConfig(fileName string) *dbclient.Config {
 }
 
 func connectDB(cfg dbclient.Config) {
-	fmt.Println(cfg)
 	if err := dbclient.Connect(cfg); err != nil {
 		log.Fatalln(err)
 	}

@@ -1,8 +1,8 @@
 package common
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
 func ObjectToJson(object interface{}) ([]byte, error) {

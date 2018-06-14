@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"net/http"
-	"Exchanger/dal"
 	"Exchanger/common"
+	"Exchanger/dal"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 // ListUsers lists the users
@@ -30,4 +30,3 @@ func GetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	common.WriteResponse(w, request[0])
 }
-

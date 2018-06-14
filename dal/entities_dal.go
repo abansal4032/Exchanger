@@ -1,11 +1,11 @@
 package dal
 
 import (
-	"Exchanger/server/dbclient"
 	"Exchanger/models"
-	"log"
+	"Exchanger/server/dbclient"
 	"database/sql"
 	"errors"
+	"log"
 )
 
 func GetAllEntitites(entityID string) ([]models.Entity, error) {
@@ -28,8 +28,27 @@ func GetAllEntitites(entityID string) ([]models.Entity, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var entity models.Entity
+		entity.Attributes = make(map[string]string)
 		if err := rows.Scan(&entity.EntityID, &entity.Name, &entity.Type, &entity.Owner, &entity.Action, &entity.Status, &entity.Price, &entity.Borrower, &entity.Location); err != nil {
 			log.Fatal(err)
+		}
+		tx2, err := dbclient.NewTransaction()
+		if err != nil {
+			return nil, err
+		}
+		defer tx2.Rollback()
+		attributes, err := tx2.Query("SELECT attribute_key, attribute_value from entity_attributes where deleted_at = 0 and entity_id = ?", entity.EntityID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer attributes.Close()
+		for attributes.Next() {
+			var key string
+			var val string
+			if err := attributes.Scan(&key, &val); err != nil {
+				log.Fatal(err)
+			}
+			entity.Attributes[key] = val
 		}
 		entities = append(entities, entity)
 	}

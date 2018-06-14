@@ -1,11 +1,11 @@
 package server
 
 import (
-	"fmt"
-	"net/http"
-	"log"
 	"Exchanger/handlers"
+	"fmt"
 	"github.com/gorilla/mux"
+	"log"
+	"net/http"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
