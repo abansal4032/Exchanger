@@ -21,6 +21,7 @@ func Start() {
 	router.HandleFunc("/users/{user_id}/updateToken", handlers.UpdateUserToken).Methods("PATCH")
 	router.HandleFunc("/entities", handlers.ListEntities).Methods("GET")
 	router.HandleFunc("/entities/{entity_id}", handlers.GetEntity).Methods("GET")
+	router.HandleFunc("/entities/search_by_name/{name}", handlers.SearchEntityByName).Methods("GET")
 	router.HandleFunc("/requests", handlers.ListRequests).Methods("GET")
 	router.HandleFunc("/requests/{request_id}", handlers.GetRequest).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
