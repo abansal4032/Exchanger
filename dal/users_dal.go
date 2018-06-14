@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	GET_USERS = ` select user_id UserId, name Name, contact_number Contact, email Email, location Location, credits Credits from user `
+	GET_USERS = ` select user_id UserId, name Name, contact_number Contact, email Email, location Location, credits Credits, registration_token Registration_Token from user `
 )
 
 func GetUsers(userId string) ([]models.User, error) {
@@ -35,7 +35,7 @@ func GetUsers(userId string) ([]models.User, error) {
 	for rows.Next() {
 		var user models.User
 		if err := rows.Scan(&user.UserID, &user.Name, &user.Contact, &user.Email,
-			&user.Location, &user.Credits); err != nil {
+			&user.Location, &user.Credits, &user.RegistrationToken); err != nil {
 			log.Fatal(err)
 		}
 		users = append(users, user)
@@ -55,6 +55,22 @@ func CreateUser(user *models.User) error {
 	defer tx.Rollback()
 	_, err = tx.Exec("INSERT INTO `user` (`user_id`, `name`, `contact_number`, `email`, `location`, `credits`)" +
 		"VALUES (?, ?, ?, ?, ?, ?)", id.String(), user.Name, user.Contact, user.Email, user.Location, user.Credits)
+	if err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateUser(token string, userId string) error {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("update user set registration_token = ? where user_id = ? ", token, userId)
 	if err != nil {
 		return err
 	}

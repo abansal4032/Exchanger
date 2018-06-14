@@ -45,6 +45,21 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateUser creates a new user entity
+func UpdateUserToken(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId := vars["user_id"]
+	req := &models.User{}
+	if err := DecodeRequestBody(r, req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error while decoding the request body" + err.Error()))
+	}
+	if err := dal.UpdateUser(req.RegistrationToken, userId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+}
+
 func DecodeRequestBody(r *http.Request, model interface{}) error {
 	if r.Body == nil {
 		return nil

@@ -3,12 +3,13 @@ package models
 import "database/sql"
 
 type User struct {
-	UserID   string `json:"userId"`
-	Name     string `json:"name"`
-	Contact  string `json:"contact"`
-	Email    string `json:"email"`
-	Location int    `json:"location"`
-	Credits  int    `json:"credits"`
+	UserID            string `json:"userId"`
+	Name              string `json:"name"`
+	Contact           string `json:"contact"`
+	Email             string `json:"email"`
+	Location          int    `json:"location"`
+	Credits           int    `json:"credits"`
+	RegistrationToken string `json:"registrationToken"`
 }
 
 type Entity struct {

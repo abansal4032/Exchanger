@@ -1,7 +1,7 @@
 -- +goose Up
 -- SQL in section 'Up' is executed when this migration is applied
 
-CREATE TABLE `enitity_attributes` (
+CREATE TABLE `entity_attributes` (
   `entity_id` varchar(50) NOT NULL DEFAULT '',
   `attribute_key` varchar(50) NOT NULL DEFAULT '',
   `attribute_value` varchar(50) NOT NULL DEFAULT '',
@@ -56,6 +56,7 @@ CREATE TABLE `user` (
   `email` varchar(50) NOT NULL DEFAULT '',
   `location` int(11) NOT NULL,
   `credits` int(11) NOT NULL,
+  `registration_token` varchar(50) NOT NULL DEFAULT '',
   `deleted_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
