@@ -25,7 +25,7 @@ func GetUsers(userId string) ([]models.User, error) {
 	if userId == "" {
 		rows, err = tx.Query(query)
 	} else {
-		query = query + " where user_id = ? "
+		query = query + " where name = ? "
 		rows, err = tx.Query(query, userId)
 	}
 	if err != nil {
@@ -74,7 +74,7 @@ func UpdateUser(token string, userId string) error {
 		return err
 	}
 	defer tx.Rollback()
-	_, err = tx.Exec("update user set registration_token = ? where user_id = ? ", token, userId)
+	_, err = tx.Exec("update user set registration_token = ? where name = ? ", token, userId)
 	if err != nil {
 		return err
 	}
