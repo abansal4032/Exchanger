@@ -42,7 +42,6 @@ func loadConfig(fileName string) *dbclient.Config {
 }
 
 func connectDB(cfg dbclient.Config) {
-	fmt.Println(cfg)
 	if err := dbclient.Connect(cfg); err != nil {
 		log.Fatalln(err)
 	}
