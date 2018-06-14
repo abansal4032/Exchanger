@@ -87,7 +87,7 @@ var MustNewTransaction = func() Tx {
 }
 
 // Connect establishes connection with the database.
-var Connect = func(cfg Config) error {
+var Connect = func(cfg DBConfig) error {
 	tempDB, err := sql.Open(DriverName, dsn(cfg))
 	if err != nil {
 		return err
@@ -105,13 +105,13 @@ var Connect = func(cfg Config) error {
 	return nil
 }
 
-func dsn(cfg Config) string {
+func dsn(cfg DBConfig) string {
 	dataSourceName := cfg.User + ":" + cfg.Passwd + "@tcp(" + cfg.Host + ":3306)/" + cfg.Name + "?" + strings.Join(cfg.Params, "&")
 	return dataSourceName
 }
 
 // Config defines the package configuration object.
-type Config struct {
+type DBConfig struct {
 	User        string   `json:"user"`
 	Passwd      string   `json:"password"`
 	Host        string   `json:"host"`

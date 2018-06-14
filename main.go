@@ -28,21 +28,22 @@ func parseFlags() {
 	}
 }
 
-func loadConfig(fileName string) *dbclient.Config {
+func loadConfig(fileName string) *server.Config {
 	//fileName := *cfgFlag
 	cfgFile, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("unable to read config from '%s': %s", fileName, err.Error()))
 	}
-	conf := &dbclient.Config{}
+	conf := &server.Config{}
 	if err := json.Unmarshal(cfgFile, conf); err != nil {
 		log.Fatalln(fmt.Errorf("unable to parse config from '%s': %s", fileName, err.Error()))
 	}
+	server.Conf = conf
 	return conf
 }
 
-func connectDB(cfg dbclient.Config) {
-	if err := dbclient.Connect(cfg); err != nil {
+func connectDB(cfg server.Config) {
+	if err := dbclient.Connect(cfg.DBConf); err != nil {
 		log.Fatalln(err)
 	}
 }

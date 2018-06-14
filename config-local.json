@@ -1,13 +1,18 @@
 {
-  "user": "root",
-  "host": "localhost",
-  "database": "exchanger",
-  "MaxOpenConns": 120,
-  "MaxIdleConns": 100,
-  "params": [
-    "collation=utf8mb4_general_ci",
-    "parseTime=True",
-    "loc=Asia%2FCalcutta",
-    "strict=true"
-  ]
+  "dbConfig":{
+    "user": "root",
+    "host": "localhost",
+    "database": "exchanger",
+    "MaxOpenConns": 120,
+    "MaxIdleConns": 100,
+    "params": [
+      "collation=utf8mb4_general_ci",
+      "parseTime=True",
+      "loc=Asia%2FCalcutta",
+      "strict=true"
+    ]
+  },
+  "accessLog": {
+    "filename": "./access.log"
+  }
 }
