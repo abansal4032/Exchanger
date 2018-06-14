@@ -115,3 +115,63 @@ func SearchEntititesByName(searchString string) ([]models.Entity, error) {
 	}
 	return entities, nil
 }
+
+func GetEntityByOwner(ownerName string) ([]models.Entity, error) {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	var rows *sql.Rows
+	rows, err = tx.Query("SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.owner where user.name = ?", ownerName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var entities []models.Entity
+	defer rows.Close()
+	for rows.Next() {
+		var entity models.Entity
+		if err := rows.Scan(&entity.EntityID, &entity.Name, &entity.Type, &entity.Owner, &entity.Action, &entity.Status, &entity.Price, &entity.Borrower, &entity.Location); err != nil {
+			log.Fatal(err)
+		}
+		entities = append(entities, entity)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	if len(entities) == 0 {
+		return nil, errors.New("not found")
+	}
+	return entities, nil
+}
+
+func GetEntityByRequester(requesterName string) ([]models.Entity, error) {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	var rows *sql.Rows
+	rows, err = tx.Query("SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.borrower where user.name = ?", requesterName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var entities []models.Entity
+	defer rows.Close()
+	for rows.Next() {
+		var entity models.Entity
+		if err := rows.Scan(&entity.EntityID, &entity.Name, &entity.Type, &entity.Owner, &entity.Action, &entity.Status, &entity.Price, &entity.Borrower, &entity.Location); err != nil {
+			log.Fatal(err)
+		}
+		entities = append(entities, entity)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	if len(entities) == 0 {
+		return nil, errors.New("not found")
+	}
+	return entities, nil
+}

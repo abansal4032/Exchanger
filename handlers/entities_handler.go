@@ -57,3 +57,29 @@ func SearchEntityByName(w http.ResponseWriter, r *http.Request) {
 	}
 	common.WriteResponse(w, res)
 }
+
+// GetEntityByOwner searches the entities for the given owner name
+func GetEntityByOwner(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	owner := vars["owner_name"]
+	res, err := dal.GetEntityByOwner(owner)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	common.WriteResponse(w, res)
+}
+
+// GetEntityByRequester searches the entities for the given requester name
+func GetEntityByRequester(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	requester := vars["requester_name"]
+	res, err := dal.GetEntityByRequester(requester)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	common.WriteResponse(w, res)
+}

@@ -15,17 +15,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func Start() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", handler).Methods("GET")
+
 	router.HandleFunc("/users", handlers.ListUsers).Methods("GET")
 	router.HandleFunc("/users", handlers.CreateUser).Methods("POST")
 	router.HandleFunc("/users/{user_id}", handlers.GetUser).Methods("GET")
 	router.HandleFunc("/users/{user_id}/updateToken", handlers.UpdateUserToken).Methods("PATCH")
+
 	router.HandleFunc("/entities", handlers.ListEntities).Methods("GET")
 	router.HandleFunc("/entities", handlers.CreateEntity).Methods("POST")
 	router.HandleFunc("/entities/{entity_id}", handlers.GetEntity).Methods("GET")
 	router.HandleFunc("/entities/search_by_name/{name}", handlers.SearchEntityByName).Methods("GET")
+	router.HandleFunc("/entities/search_by_owner/{owner_name}", handlers.GetEntityByOwner).Methods("GET")
+	router.HandleFunc("/entities/search_by_requester/{requester_name}", handlers.GetEntityByRequester).Methods("GET")
+
 	router.HandleFunc("/requests", handlers.ListRequests).Methods("GET")
 	router.HandleFunc("/requests/{request_id}", handlers.GetRequest).Methods("GET")
 	router.HandleFunc("/requests/search_by_requester/{requester_name}", handlers.GetRequestByRequester).Methods("GET")
 	router.HandleFunc("/requests/search_by_owner/{owner_name}", handlers.GetRequestByOwner).Methods("GET")
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
