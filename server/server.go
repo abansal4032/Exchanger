@@ -2,17 +2,23 @@ package server
 
 import (
 	"Exchanger/handlers"
-	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"io"
-	"os"
 	"Exchanger/middleware"
+	"os"
+	"encoding/json"
+	"io"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+
+func middlewareChain() *middleware.Chain {
+	middleware.LogRequestBody = true
+	middleware.BodyCompacter = json.Compact
+	c := middleware.NewChain(
+		middleware.LogRequest,
+	)
+	return c
 }
 
 
@@ -28,8 +34,10 @@ func accessLogWriteCloser(cfg *Config) io.WriteCloser {
 }
 
 func Start() {
+	writeCloser := accessLogWriteCloser(Conf)
+	defer writeCloser.Close()
+	middleware.AccessLogWriter = writeCloser
 	router := mux.NewRouter()
-	router.HandleFunc("/", handler).Methods("GET")
 
 	router.HandleFunc("/users", handlers.ListUsers).Methods("GET")
 	router.HandleFunc("/users", handlers.CreateUser).Methods("POST")
@@ -53,5 +61,7 @@ func Start() {
 	defer writeCloser.Close()
 	middleware.AccessLogWriter = writeCloser
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	http.Handle("/", middlewareChain().Final(router))
+
+	log.Fatal(http.ListenAndServe(":8080", http.DefaultServeMux))
 }
