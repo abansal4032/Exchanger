@@ -5,6 +5,7 @@ import (
 	"Exchanger/dal"
 	"github.com/gorilla/mux"
 	"net/http"
+	"encoding/json"
 )
 
 // ListEntities lists the entities

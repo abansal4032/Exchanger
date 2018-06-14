@@ -30,3 +30,27 @@ func GetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	common.WriteResponse(w, request[0])
 }
+
+func GetRequestByRequester(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	requesterName := vars["requester_name"]
+	requests, err := dal.GetRequestsByRequester(requesterName)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	common.WriteResponse(w, requests)
+}
+
+func GetRequestByOwner(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	ownerName := vars["owner_name"]
+	requests, err := dal.GetRequestsByOwner(ownerName)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	common.WriteResponse(w, requests)
+}

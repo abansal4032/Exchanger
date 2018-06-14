@@ -24,5 +24,7 @@ func Start() {
 	router.HandleFunc("/entities/search_by_name/{name}", handlers.SearchEntityByName).Methods("GET")
 	router.HandleFunc("/requests", handlers.ListRequests).Methods("GET")
 	router.HandleFunc("/requests/{request_id}", handlers.GetRequest).Methods("GET")
+	router.HandleFunc("/requests/search_by_requester/{requester_name}", handlers.GetRequestByRequester).Methods("GET")
+	router.HandleFunc("/requests/search_by_owner/{owner_name}", handlers.GetRequestByOwner).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
