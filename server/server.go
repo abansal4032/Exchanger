@@ -20,6 +20,7 @@ func Start() {
 	router.HandleFunc("/users/{user_id}", handlers.GetUser).Methods("GET")
 	router.HandleFunc("/users/{user_id}/updateToken", handlers.UpdateUserToken).Methods("PATCH")
 	router.HandleFunc("/entities", handlers.ListEntities).Methods("GET")
+	router.HandleFunc("/entities", handlers.CreateEntity).Methods("POST")
 	router.HandleFunc("/entities/{entity_id}", handlers.GetEntity).Methods("GET")
 	router.HandleFunc("/entities/search_by_name/{name}", handlers.SearchEntityByName).Methods("GET")
 	router.HandleFunc("/requests", handlers.ListRequests).Methods("GET")

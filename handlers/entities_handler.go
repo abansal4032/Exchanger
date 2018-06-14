@@ -3,9 +3,9 @@ package handlers
 import (
 	"Exchanger/common"
 	"Exchanger/dal"
+	"Exchanger/models"
 	"github.com/gorilla/mux"
 	"net/http"
-	"encoding/json"
 )
 
 // ListEntities lists the entities
@@ -32,6 +32,19 @@ func GetEntity(w http.ResponseWriter, r *http.Request) {
 	common.WriteResponse(w, res[0])
 }
 
+// CreateUser creates a new user entity
+func CreateEntity(w http.ResponseWriter, r *http.Request) {
+	req := &models.Entity{}
+	if err := DecodeRequestBody(r, req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error while decoding the request body" + err.Error()))
+	}
+	if err := dal.CreateEntity(req); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+}
+
 // SearchEntityByName searches the entities for the given string name
 func SearchEntityByName(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -42,12 +55,5 @@ func SearchEntityByName(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	resp, err := json.Marshal(res)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	common.WriteResponse(w, res)
 }

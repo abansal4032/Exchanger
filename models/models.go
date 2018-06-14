@@ -19,19 +19,19 @@ type Entity struct {
 	Owner      string            `json:"owner"`
 	Action     string            `json:"actionType"`
 	Status     string            `json:"status"`
-	Price      sql.NullInt64     `json:"price"`
-	Borrower   string            `json:"borrower"`
+	Price      int               `json:"price"`
+	Borrower   sql.NullString    `json:"borrower"`
 	Location   int               `json:"location"`
 	Attributes map[string]string `json:"attributes"`
 }
 
 type Requests struct {
-	RequestID        string         `json:"requestId"`
-	EntityID         string         `json:"entityId"`
-	Requester        string         `json:"requester"`
-	Intent           string         `json:"intent"`
-	DurationInDays   int            `json:"durationInDays"`
-	Status           string         `json:"status"`
-	RequesterComment sql.NullString `json:"requesterComment"`
-	OwnerComment     sql.NullString `json:"ownerComment"`
+	RequestID        string `json:"requestId"`
+	EntityID         string `json:"entityId"`
+	Requester        string `json:"requester"`
+	Intent           string `json:"intent"`
+	DurationInDays   int    `json:"durationInDays"`
+	Status           string `json:"status"`
+	RequesterComment string `json:"requesterComment"`
+	OwnerComment     string `json:"ownerComment"`
 }

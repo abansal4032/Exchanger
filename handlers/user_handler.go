@@ -38,10 +38,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err := DecodeRequestBody(r, req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Error while decoding the request body" + err.Error()))
+		return
 	}
 	if _, err := dal.GetUsers(req.Name); err == nil {
 		w.WriteHeader(http.StatusConflict)
-		w.Write([]byte(err.Error()))
+		w.Write([]byte("already existing user"))
+		return
 	}
 	if err := dal.CreateUser(req); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

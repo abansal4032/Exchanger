@@ -5,6 +5,7 @@ import (
 	"Exchanger/server/dbclient"
 	"database/sql"
 	"errors"
+	"github.com/nu7hatch/gouuid"
 	"log"
 )
 
@@ -59,6 +60,30 @@ func GetAllEntitites(entityID string) ([]models.Entity, error) {
 		return nil, errors.New("not found")
 	}
 	return entities, nil
+}
+
+func CreateEntity(entity *models.Entity) error {
+	id, _ := uuid.NewV4()
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("INSERT INTO `entity` (`entity_id`,`entity_name`,`entity_type`,`owner`,`action_type`,`status`,`price`,`location`) "+
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?)", id.String(), entity.Name, entity.Type, entity.Owner, entity.Action, entity.Status, entity.Price, entity.Location)
+	if err != nil {
+		return err
+	}
+	for k, v := range entity.Attributes {
+		_, err = tx.Exec("Insert into `entity_attributes` (`entity_id`,`attribute_key`,`attribute_value`) values (?, ?, ?)", id.String(), k, v)
+		if err != nil {
+			return err
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func SearchEntititesByName(searchString string) ([]models.Entity, error) {
