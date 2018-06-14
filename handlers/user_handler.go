@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"Exchanger/models"
+	"encoding/json"
 	"Exchanger/dal"
 	"Exchanger/common"
 	"github.com/gorilla/mux"
@@ -27,4 +29,29 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	common.WriteResponse(w, user)
+}
+
+
+// CreateUser creates a new user entity
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	req := &models.User{}
+	if err := DecodeRequestBody(r, req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error while decoding the request body" + err.Error()))
+	}
+	if err := dal.CreateUser(req); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+}
+
+func DecodeRequestBody(r *http.Request, model interface{}) error {
+	if r.Body == nil {
+		return nil
+	}
+	d := json.NewDecoder(r.Body)
+	if err := d.Decode(model); err != nil {
+		return err
+	}
+	return nil
 }

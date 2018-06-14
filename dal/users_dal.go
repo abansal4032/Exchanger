@@ -5,6 +5,7 @@ import (
 	"Exchanger/models"
 	"Exchanger/server/dbclient"
 	"database/sql"
+	"github.com/nu7hatch/gouuid"
 )
 
 const (
@@ -43,4 +44,22 @@ func GetUsers(userId string) ([]models.User, error) {
 		log.Fatal(err)
 	}
 	return users, nil
+}
+
+func CreateUser(user *models.User) error {
+	id, _ := uuid.NewV4()
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("INSERT INTO `user` (`user_id`, `name`, `contact_number`, `email`, `location`, `credits`)" +
+		"VALUES (?, ?, ?, ?, ?, ?)", id.String(), user.Name, user.Contact, user.Email, user.Location, user.Credits)
+	if err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
 }

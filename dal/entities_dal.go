@@ -5,6 +5,7 @@ import (
 	"Exchanger/models"
 	"log"
 	"database/sql"
+	"errors"
 )
 
 func GetAllEntitites(entityID string) ([]models.Entity, error) {
@@ -34,6 +35,9 @@ func GetAllEntitites(entityID string) ([]models.Entity, error) {
 	}
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
+	}
+	if len(entities) == 0 {
+		return nil, errors.New("not found")
 	}
 	return entities, nil
 }
