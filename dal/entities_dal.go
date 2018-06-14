@@ -116,6 +116,22 @@ func SearchEntititesByName(searchString string) ([]models.Entity, error) {
 	return entities, nil
 }
 
+func UpdateBorrower(entityId string, borrower string, status string) error {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("update entity set borrower = ?, status = ? where entity_id = ? ", borrower, status, entityId)
+	if err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetEntityByOwner(ownerName string) ([]models.Entity, error) {
 	tx, err := dbclient.NewTransaction()
 	if err != nil {

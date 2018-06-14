@@ -4,8 +4,10 @@ import (
 	"Exchanger/models"
 	"Exchanger/server/dbclient"
 	"database/sql"
+	"github.com/nu7hatch/gouuid"
 	"errors"
 	"log"
+	"strings"
 )
 
 const (
@@ -113,4 +115,46 @@ func GetRequestsByRequester(requesterName string) ([]models.Requests, error) {
 		return nil, errors.New("not found")
 	}
 	return requests, nil
+}
+
+func CreateRequest(request *models.Requests) error {
+	id, _ := uuid.NewV4()
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("INSERT INTO `requests` (`request_id`,`entity_id`,`requester`,`intent`,`duration_in_days`,`status`,`requester_comment`) "+
+		"VALUES (?, ?, ?, ?, ?, ?, ?)", id.String(), request.EntityID, request.Requester, request.Intent, request.DurationInDays, request.Status, request.RequesterComment)
+	if err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateRequest(req *models.Requests, requstId string) error {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	status := req.Status
+	_, err = tx.Exec("update requests set status = ?, owner_comment = ? where request_id = ? ", status, req.OwnerComment, requstId)
+	if err != nil {
+		return err
+	}
+	if strings.ToLower(status) == "approved" {
+		request, err := GetRequests(requstId)
+		if err != nil {
+			return err
+		}
+		err = UpdateBorrower(request[0].EntityID, request[0].Requester, "Alloted")
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
 }

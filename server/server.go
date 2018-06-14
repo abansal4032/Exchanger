@@ -29,7 +29,9 @@ func Start() {
 	router.HandleFunc("/entities/search_by_requester/{requester_name}", handlers.GetEntityByRequester).Methods("GET")
 
 	router.HandleFunc("/requests", handlers.ListRequests).Methods("GET")
+	router.HandleFunc("/requests", handlers.CreateRequest).Methods("POST")
 	router.HandleFunc("/requests/{request_id}", handlers.GetRequest).Methods("GET")
+	router.HandleFunc("/requests/{request_id}", handlers.UpdateRequest).Methods("PATCH")
 	router.HandleFunc("/requests/search_by_requester/{requester_name}", handlers.GetRequestByRequester).Methods("GET")
 	router.HandleFunc("/requests/search_by_owner/{owner_name}", handlers.GetRequestByOwner).Methods("GET")
 

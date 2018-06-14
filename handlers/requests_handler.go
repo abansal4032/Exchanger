@@ -4,6 +4,7 @@ import (
 	"Exchanger/common"
 	"Exchanger/dal"
 	"github.com/gorilla/mux"
+	"Exchanger/models"
 	"net/http"
 )
 
@@ -53,4 +54,32 @@ func GetRequestByOwner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	common.WriteResponse(w, requests)
+}
+
+// CreateUser creates a new user entity
+func CreateRequest(w http.ResponseWriter, r *http.Request) {
+	req := &models.Requests{}
+	if err := DecodeRequestBody(r, req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error while decoding the request body" + err.Error()))
+	}
+	if err := dal.CreateRequest(req); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+}
+
+// CreateUser creates a new user entity
+func UpdateRequest(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	requestId := vars["request_id"]
+	req := &models.Requests{}
+	if err := DecodeRequestBody(r, req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error while decoding the request body" + err.Error()))
+	}
+	if err := dal.UpdateRequest(req, requestId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
 }
