@@ -20,5 +20,7 @@ func Start() {
 	router.HandleFunc("/users/{user_id}", handlers.GetUser).Methods("GET")
 	router.HandleFunc("/entities", handlers.ListEntities).Methods("GET")
 	router.HandleFunc("/entities/{entity_id}", handlers.GetEntity).Methods("GET")
+	router.HandleFunc("/requests", handlers.ListRequests).Methods("GET")
+	router.HandleFunc("/requests/{request_id}", handlers.GetRequest).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
