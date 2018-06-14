@@ -16,6 +16,7 @@ func Start() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", handler).Methods("GET")
 	router.HandleFunc("/users", handlers.ListUsers).Methods("GET")
+	router.HandleFunc("/users/{user_id}", handlers.GetUser).Methods("GET")
 	router.HandleFunc("/entities", handlers.ListEntities).Methods("GET")
 	router.HandleFunc("/entities/{entity_id}", handlers.GetEntity).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8080", router))
