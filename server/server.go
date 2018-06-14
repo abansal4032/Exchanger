@@ -57,9 +57,6 @@ func Start() {
 	router.HandleFunc("/requests/{request_id}", handlers.UpdateRequest).Methods("PATCH")
 	router.HandleFunc("/requests/search_by_requester/{requester_name}", handlers.GetRequestByRequester).Methods("GET")
 	router.HandleFunc("/requests/search_by_owner/{owner_name}", handlers.GetRequestByOwner).Methods("GET")
-	writeCloser := accessLogWriteCloser(Conf)
-	defer writeCloser.Close()
-	middleware.AccessLogWriter = writeCloser
 
 	http.Handle("/", middlewareChain().Final(router))
 
