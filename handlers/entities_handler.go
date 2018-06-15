@@ -93,3 +93,14 @@ func GetEntityByRequester(w http.ResponseWriter, r *http.Request) {
 	}
 	common.WriteResponse(w, res)
 }
+
+func UpdateEntityAction(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	entityId := vars["entity_id"]
+	action := vars["action_type"]
+	if err := dal.UpdateEntityAction(entityId, action); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+	w.WriteHeader(http.StatusOK)
+}

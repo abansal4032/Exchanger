@@ -102,8 +102,27 @@ func SearchEntititesByName(searchString string) ([]models.Entity, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var entity models.Entity
+		entity.Attributes = make(map[string]string)
 		if err := rows.Scan(&entity.EntityID, &entity.Name, &entity.Type, &entity.Owner, &entity.Action, &entity.Status, &entity.Price, &entity.Borrower, &entity.Location); err != nil {
 			log.Fatal(err)
+		}
+		tx2, err := dbclient.NewTransaction()
+		if err != nil {
+			return nil, err
+		}
+		defer tx2.Rollback()
+		attributes, err := tx2.Query("SELECT attribute_key, attribute_value from entity_attributes where deleted_at = 0 and entity_id = ?", entity.EntityID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer attributes.Close()
+		for attributes.Next() {
+			var key string
+			var val string
+			if err := attributes.Scan(&key, &val); err != nil {
+				log.Fatal(err)
+			}
+			entity.Attributes[key] = val
 		}
 		entities = append(entities, entity)
 	}
@@ -140,7 +159,7 @@ func GetEntityByOwner(ownerName, filter string) ([]models.Entity, error) {
 	defer tx.Rollback()
 
 	var rows *sql.Rows
-	query := "SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.owner where user.name = ?"
+	query := "SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity where owner = ?"
 	if filter == "SELL" {
 		query += " and action_type = 'SELL'"
 	} else if filter == "SHARE" {
@@ -154,8 +173,27 @@ func GetEntityByOwner(ownerName, filter string) ([]models.Entity, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var entity models.Entity
+		entity.Attributes = make(map[string]string)
 		if err := rows.Scan(&entity.EntityID, &entity.Name, &entity.Type, &entity.Owner, &entity.Action, &entity.Status, &entity.Price, &entity.Borrower, &entity.Location); err != nil {
 			log.Fatal(err)
+		}
+		tx2, err := dbclient.NewTransaction()
+		if err != nil {
+			return nil, err
+		}
+		defer tx2.Rollback()
+		attributes, err := tx2.Query("SELECT attribute_key, attribute_value from entity_attributes where deleted_at = 0 and entity_id = ?", entity.EntityID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer attributes.Close()
+		for attributes.Next() {
+			var key string
+			var val string
+			if err := attributes.Scan(&key, &val); err != nil {
+				log.Fatal(err)
+			}
+			entity.Attributes[key] = val
 		}
 		entities = append(entities, entity)
 	}
@@ -176,7 +214,7 @@ func GetEntityByRequester(requesterName, filter string) ([]models.Entity, error)
 	defer tx.Rollback()
 
 	var rows *sql.Rows
-	query := "SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.borrower where user.name = ?"
+	query := "SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity where borrower = ?"
 	if filter == "SELL" {
 		query += " and action_type = 'SELL'"
 	} else if filter == "SHARE" {
@@ -190,8 +228,27 @@ func GetEntityByRequester(requesterName, filter string) ([]models.Entity, error)
 	defer rows.Close()
 	for rows.Next() {
 		var entity models.Entity
+		entity.Attributes = make(map[string]string)
 		if err := rows.Scan(&entity.EntityID, &entity.Name, &entity.Type, &entity.Owner, &entity.Action, &entity.Status, &entity.Price, &entity.Borrower, &entity.Location); err != nil {
 			log.Fatal(err)
+		}
+		tx2, err := dbclient.NewTransaction()
+		if err != nil {
+			return nil, err
+		}
+		defer tx2.Rollback()
+		attributes, err := tx2.Query("SELECT attribute_key, attribute_value from entity_attributes where deleted_at = 0 and entity_id = ?", entity.EntityID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer attributes.Close()
+		for attributes.Next() {
+			var key string
+			var val string
+			if err := attributes.Scan(&key, &val); err != nil {
+				log.Fatal(err)
+			}
+			entity.Attributes[key] = val
 		}
 		entities = append(entities, entity)
 	}
@@ -202,4 +259,20 @@ func GetEntityByRequester(requesterName, filter string) ([]models.Entity, error)
 		return nil, errors.New("not found")
 	}
 	return entities, nil
+}
+
+func UpdateEntityAction(entityId, action string) error {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("UPDATE entity set action_type = ? where entity_id = ?", action, entityId)
+	if err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
 }

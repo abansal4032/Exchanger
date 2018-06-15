@@ -51,7 +51,7 @@ func GetRequests(requestId string) ([]models.Requests, error) {
 	return requests, nil
 }
 
-func GetRequestsByOwner(ownerName string) ([]models.Requests, error) {
+func GetRequestsByOwner(ownerName string) ([]models.RequestsResponse, error) {
 	tx, err := dbclient.NewTransaction()
 	if err != nil {
 		return nil, err
@@ -60,19 +60,23 @@ func GetRequestsByOwner(ownerName string) ([]models.Requests, error) {
 
 	query := GET_REQUESTS
 	var rows *sql.Rows
-	query = query + " join entity using(entity_id) join user on user.user_id=entity.owner where user.name = ? "
+	query = query + " join entity using(entity_id) where owner = ? and requests.status != 'CANCELLED' "
 	rows, err = tx.Query(query, ownerName)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var requests []models.Requests
+	var requests []models.RequestsResponse
 	defer rows.Close()
 	for rows.Next() {
-		var request models.Requests
-		if err := rows.Scan(&request.RequestID, &request.EntityID, &request.Requester, &request.Intent, &request.DurationInDays,
+		var request models.RequestsResponse
+		var entityId string
+		if err := rows.Scan(&request.RequestID, &entityId, &request.Requester, &request.Intent, &request.DurationInDays,
 			&request.Status, &request.RequesterComment, &request.OwnerComment); err != nil {
 			log.Fatal(err)
 		}
+
+		entity, _ := GetAllEntitites(entityId)
+		request.Entity = entity[0]
 		requests = append(requests, request)
 	}
 	if err := rows.Err(); err != nil {
@@ -84,7 +88,7 @@ func GetRequestsByOwner(ownerName string) ([]models.Requests, error) {
 	return requests, nil
 }
 
-func GetRequestsByRequester(requesterName string) ([]models.Requests, error) {
+func GetRequestsByRequester(requesterName string) ([]models.RequestsResponse, error) {
 	tx, err := dbclient.NewTransaction()
 	if err != nil {
 		return nil, err
@@ -93,19 +97,22 @@ func GetRequestsByRequester(requesterName string) ([]models.Requests, error) {
 
 	query := GET_REQUESTS
 	var rows *sql.Rows
-	query = query + " where requester = ? "
+	query = query + " where requester = ? and requests.status != 'CANCELLED'"
 	rows, err = tx.Query(query, requesterName)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var requests []models.Requests
+	var requests []models.RequestsResponse
 	defer rows.Close()
 	for rows.Next() {
-		var request models.Requests
-		if err := rows.Scan(&request.RequestID, &request.EntityID, &request.Requester, &request.Intent, &request.DurationInDays,
+		var request models.RequestsResponse
+		var entityId string
+		if err := rows.Scan(&request.RequestID, &entityId, &request.Requester, &request.Intent, &request.DurationInDays,
 			&request.Status, &request.RequesterComment, &request.OwnerComment); err != nil {
 			log.Fatal(err)
 		}
+		entity, _ := GetAllEntitites(entityId)
+		request.Entity = entity[0]
 		requests = append(requests, request)
 	}
 	if err := rows.Err(); err != nil {

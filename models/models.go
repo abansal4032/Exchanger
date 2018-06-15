@@ -35,3 +35,14 @@ type Requests struct {
 	RequesterComment string `json:"requesterComment"`
 	OwnerComment     string `json:"ownerComment"`
 }
+
+type RequestsResponse struct {
+	RequestID        string `json:"requestId"`
+	Entity           Entity `json:"entity"`
+	Requester        string `json:"requester"`
+	Intent           string `json:"intent"`
+	DurationInDays   int    `json:"durationInDays"`
+	Status           string `json:"status"`
+	RequesterComment string `json:"requesterComment"`
+	OwnerComment     string `json:"ownerComment"`
+}
