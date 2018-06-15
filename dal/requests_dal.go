@@ -60,7 +60,7 @@ func SearchExistingRequests(entityId, requester string) ([]models.Requests, erro
 
 	query := GET_REQUESTS
 	var rows *sql.Rows
-	query = query + " where requester = ? and entity_id = ?"
+	query = query + " where requester = ? and entity_id = ? and status != 'CANCELLED'"
 	rows, err = tx.Query(query, requester, entityId)
 	if err != nil {
 		log.Fatal(err)
