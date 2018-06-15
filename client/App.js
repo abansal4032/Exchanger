@@ -5,6 +5,8 @@ import NewUserForm from './NewUserForm';
 import AddBook from './AddBook';
 import ScanBook from './ScanBook';
 import LandingPage from './LandingPage';
+import BookSearchForm from './BookSearchForm';
+
 import { Header } from 'react-native-elements';
 
 const AppStack = createStackNavigator({
@@ -32,6 +34,19 @@ const AppStack = createStackNavigator({
         navigationOptions: () => ({
             title: 'Scan Book Barcode'
         })
+    },
+    searchBook: {
+        screen: BookSearchForm,
+        navigationOptions: () => ({
+            header: (
+                <Header
+                    centerComponent={{
+                        text: 'Explore',
+                        style: { color: '#fff' }
+                    }}
+                />
+            )
+        })
     }
 });
 
@@ -55,7 +70,7 @@ const App = createSwitchNavigator(
     {
         AuthLoading: AuthLoadingScreen,
         App: AppStack,
-        Auth: NewUserForm
+        Auth: BookSearchForm //THIS IS A HACK - Remove it
     },
     {
         initialRouteName: 'AuthLoading'
