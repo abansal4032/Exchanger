@@ -18,9 +18,9 @@ func GetAllEntitites(entityID string) ([]models.Entity, error) {
 
 	var rows *sql.Rows
 	if entityID == "" {
-		rows, err = tx.Query("SELECT entity_id, entity_name, entity_type, owner, action_type, status, price, borrower, location from entity")
+		rows, err = tx.Query("SELECT entity_id, entity_name, entity_type, owner, action_type, status, price, borrower, location from entity where status = 'AVAILABLE'")
 	} else {
-		rows, err = tx.Query("SELECT entity_id, entity_name, entity_type, owner, action_type, status, price, borrower, location from entity where entity_id = ?", entityID)
+		rows, err = tx.Query("SELECT entity_id, entity_name, entity_type, owner, action_type, status, price, borrower, location from entity where entity_id = ? and status = 'AVAILABLE'", entityID)
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -268,6 +268,26 @@ func UpdateEntityAction(entityId, action string) error {
 	}
 	defer tx.Rollback()
 	_, err = tx.Exec("UPDATE entity set action_type = ? where entity_id = ?", action, entityId)
+	if err != nil {
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func ReleaseEntity(entityId string) error {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("UPDATE entity set status = 'AVAILABLE', borrower = NULL where entity_id = ?", entityId)
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec("UPDATE requests set status = 'CANCELLED' where entity_id = ?", entityId)
 	if err != nil {
 		return err
 	}

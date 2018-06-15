@@ -104,3 +104,13 @@ func UpdateEntityAction(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 }
+
+func ReleaseEntity(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	entityId := vars["entity_id"]
+	if err := dal.ReleaseEntity(entityId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+	w.WriteHeader(http.StatusOK)
+}
