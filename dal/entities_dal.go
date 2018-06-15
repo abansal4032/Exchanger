@@ -94,7 +94,7 @@ func SearchEntititesByName(searchString string) ([]models.Entity, error) {
 	defer tx.Rollback()
 
 	var rows *sql.Rows
-	rows, err = tx.Query("SELECT entity_id, entity_name, entity_type, owner, action_type, status, price, borrower, location from entity where entity_name like '%" + searchString + "%'")
+	rows, err = tx.Query("SELECT entity_id, entity_name, entity_type, owner, action_type, status, price, borrower, location from entity where status = 'AVAILABLE' and entity_name like '%" + searchString + "%'")
 	if err != nil {
 		log.Fatal(err)
 	}
