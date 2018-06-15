@@ -14,7 +14,7 @@ func init() {
 
 func Push(token, message, page string) error {
 	// To check the token is valid
-	pushToken, err := expo.NewExponentPushToken("ExponentPushToken["+token+"]")
+	pushToken, err := expo.NewExponentPushToken(expo.ExponentPushToken(token))
 	if err != nil {
 		return err
 	}
@@ -39,4 +39,5 @@ func Push(token, message, page string) error {
 	if response.ValidateResponse() != nil {
 		return errors.New("failed to publish")
 	}
+	return nil
 }

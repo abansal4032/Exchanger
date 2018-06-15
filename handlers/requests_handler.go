@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"Exchanger/models"
 	"net/http"
+	"Exchanger/notifier"
 )
 
 // ListUsers lists the users
@@ -64,7 +65,7 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error while decoding the request body" + err.Error()))
 		return
 	}
-	if err := dal.SearchExistingRequests(req.EntityID, req.Requester); err == nil {
+	if _, err := dal.SearchExistingRequests(req.EntityID, req.Requester); err == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Already raised request"))
 		return
@@ -73,6 +74,17 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 	}
+	defer func (){
+		entity, err := dal.GetAllEntitites(req.EntityID)
+		if err != nil {
+			return
+		}
+		user, err := dal.GetUsers(entity[0].Owner)
+		if err != nil {
+			return
+		}
+		notifier.Push(user[0].RegistrationToken, "Hola! "+ entity[0].Borrower.String+ " is requesting book "+ entity[0].Name, "page")
+	}()
 }
 
 // CreateUser creates a new user entity
