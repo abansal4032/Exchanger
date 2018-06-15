@@ -62,6 +62,12 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 	if err := DecodeRequestBody(r, req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Error while decoding the request body" + err.Error()))
+		return
+	}
+	if err := dal.SearchExistingRequests(req.EntityID, req.Requester); err == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Already raised request"))
+		return
 	}
 	if err := dal.CreateRequest(req); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

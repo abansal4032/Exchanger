@@ -51,6 +51,39 @@ func GetRequests(requestId string) ([]models.Requests, error) {
 	return requests, nil
 }
 
+func SearchExistingRequests(entityId, requester string) ([]models.Requests, error) {
+	tx, err := dbclient.NewTransaction()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	query := GET_REQUESTS
+	var rows *sql.Rows
+	query = query + " where requester = ? and entity_id = ?"
+	rows, err = tx.Query(query, requester, entityId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var requests []models.Requests
+	defer rows.Close()
+	for rows.Next() {
+		var request models.Requests
+		if err := rows.Scan(&request.RequestID, &request.EntityID, &request.Requester, &request.Intent, &request.DurationInDays,
+			&request.Status, &request.RequesterComment, &request.OwnerComment); err != nil {
+			log.Fatal(err)
+		}
+		requests = append(requests, request)
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	if len(requests) == 0 {
+		return nil, errors.New("not found")
+	}
+	return requests, nil
+}
+
 func GetRequestsByOwner(ownerName string) ([]models.RequestsResponse, error) {
 	tx, err := dbclient.NewTransaction()
 	if err != nil {
