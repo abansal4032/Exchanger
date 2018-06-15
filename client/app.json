@@ -1,5 +1,15 @@
 {
+  "android": {
+    "package" : "com.weareroot.exchanger",
+    "googleServicesFile": "./google-services.json"
+  },
   "expo": {
-    "sdkVersion": "27.0.0"
+    "sdkVersion": "27.0.0",
+    "name": "com.weareroot.exchanger",
+    "slug": "xchange",
+    "android": {
+      "package" : "com.weareroot.exchanger",
+      "googleServicesFile": "./google-services.json"
+    }
   }
 }

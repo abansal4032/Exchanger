@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "579810386547",
+    "firebase_url": "https://exchanger-e6618.firebaseio.com",
+    "project_id": "exchanger-e6618",
+    "storage_bucket": "exchanger-e6618.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579810386547:android:028e0264e75faa65",
+        "android_client_info": {
+          "package_name": "com.weareroot.exchanger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579810386547-578vuvdvhe6qdcls80knurspm6g8qb6h.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "579810386547-578vuvdvhe6qdcls80knurspm6g8qb6h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyhmw0MtIFdk3vLCtlJckqpp5JvdIOExA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
