@@ -62,7 +62,12 @@ func SearchEntityByName(w http.ResponseWriter, r *http.Request) {
 func GetEntityByOwner(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	owner := vars["owner_name"]
-	res, err := dal.GetEntityByOwner(owner)
+	filters := r.URL.Query()["filter"]
+	filter := ""
+	if filters != nil {
+		filter = filters[0]
+	}
+	res, err := dal.GetEntityByOwner(owner, filter)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(err.Error()))
@@ -75,7 +80,12 @@ func GetEntityByOwner(w http.ResponseWriter, r *http.Request) {
 func GetEntityByRequester(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	requester := vars["requester_name"]
-	res, err := dal.GetEntityByRequester(requester)
+	filters := r.URL.Query()["filter"]
+	filter := ""
+	if filters != nil {
+		filter = filters[0]
+	}
+	res, err := dal.GetEntityByRequester(requester, filter)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(err.Error()))

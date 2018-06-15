@@ -132,7 +132,7 @@ func UpdateBorrower(entityId string, borrower string, status string) error {
 	return nil
 }
 
-func GetEntityByOwner(ownerName string) ([]models.Entity, error) {
+func GetEntityByOwner(ownerName, filter string) ([]models.Entity, error) {
 	tx, err := dbclient.NewTransaction()
 	if err != nil {
 		return nil, err
@@ -140,7 +140,13 @@ func GetEntityByOwner(ownerName string) ([]models.Entity, error) {
 	defer tx.Rollback()
 
 	var rows *sql.Rows
-	rows, err = tx.Query("SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.owner where user.name = ?", ownerName)
+	query := "SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.owner where user.name = ?"
+	if filter == "SELL" {
+		query += " and action_type = 'SELL'"
+	} else if filter == "SHARE" {
+		query += " and action_type = 'SHARE'"
+	}
+	rows, err = tx.Query(query, ownerName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -162,7 +168,7 @@ func GetEntityByOwner(ownerName string) ([]models.Entity, error) {
 	return entities, nil
 }
 
-func GetEntityByRequester(requesterName string) ([]models.Entity, error) {
+func GetEntityByRequester(requesterName, filter string) ([]models.Entity, error) {
 	tx, err := dbclient.NewTransaction()
 	if err != nil {
 		return nil, err
@@ -170,7 +176,13 @@ func GetEntityByRequester(requesterName string) ([]models.Entity, error) {
 	defer tx.Rollback()
 
 	var rows *sql.Rows
-	rows, err = tx.Query("SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.borrower where user.name = ?", requesterName)
+	query := "SELECT entity.entity_id, entity.entity_name, entity.entity_type, entity.owner, entity.action_type, entity.status, entity.price, entity.borrower, entity.location from entity join user on user.user_id = entity.borrower where user.name = ?"
+	if filter == "SELL" {
+		query += " and action_type = 'SELL'"
+	} else if filter == "SHARE" {
+		query += " and action_type = 'SHARE'"
+	}
+	rows, err = tx.Query(query, requesterName)
 	if err != nil {
 		log.Fatal(err)
 	}
