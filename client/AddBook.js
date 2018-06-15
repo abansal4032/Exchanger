@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, AsyncStorage } from 'react-native';
 import {
     FormLabel,
     FormInput,
@@ -16,7 +16,8 @@ export default class AddBook extends React.Component {
         super(props);
         this.state = {
             isbn: '',
-            book: null
+            book: null,
+            username: ''
         };
         this.setIsbn = this.setIsbn.bind(this);
         this.getBookDetails = this.getBookDetails.bind(this);
@@ -25,7 +26,14 @@ export default class AddBook extends React.Component {
     setIsbn(isbn) {
         this.setState({ isbn });
     }
-    componentDidMount() {}
+    async componentDidMount() {
+        try {
+            const value = await AsyncStorage.getItem('username');
+            this.setState({ username: value });
+        } catch (error) {
+            alert(error);
+        }
+    }
     getBookDetails() {
         console.log(this.state.isbn);
         fetch(
@@ -58,7 +66,7 @@ export default class AddBook extends React.Component {
             body: JSON.stringify({
                 name: this.state.book.title,
                 type: 'book',
-                owner: '27362d35-c27c-4635-44a4-50b025fe6dd3',
+                owner: this.state.username,
                 actionType: 'SELL',
                 status: 'Available',
                 price: 50,

@@ -1,24 +1,59 @@
 import React from 'react';
-import { StyleSheet, View, Text, Picker, AsyncStorage } from 'react-native';
-import { Header, Icon, FormLabel, Card, ButtonGroup } from 'react-native-elements';
+import {
+    StyleSheet,
+    ScrollView,
+    View,
+    Text,
+    Picker,
+    AsyncStorage,
+    Image
+} from 'react-native';
+import {
+    Header,
+    Icon,
+    FormLabel,
+    Card,
+    ButtonGroup
+} from 'react-native-elements';
 
 class Book extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             selectedIndex: this.props.actionType === 'SELL' ? 0 : 1
-        }
+        };
         this.updateSaleOrShare = this.updateSaleOrShare.bind(this);
     }
     updateSaleOrShare(selectedIndex) {
-        this.setState({
-            selectedIndex
-        })
+        this.setState(
+            {
+                selectedIndex
+            },
+            () => {
+                fetch(
+                    `http://10.32.239.106:8080/entities/${
+                        this.props.entityId
+                    }/action/${!this.props.actionType ? 'SELL' : 'SHARE'}`,
+                    {
+                        method: 'PATCH'
+                    }
+                ).then(res => console.log(res));
+            }
+        );
     }
     render() {
         console.log(this.props);
         return (
             <Card title={this.props.name}>
+                <Image
+                    style={{ height: 300, width: '100%' }}
+                    source={{
+                        uri: `http://covers.openlibrary.org/b/isbn/${
+                            this.props.attributes.isbn
+                        }-M.jpg`
+                    }}
+                    resizeMode="cover"
+                />
                 <ButtonGroup
                     selectedIndex={this.state.selectedIndex}
                     onPress={this.updateSaleOrShare}
@@ -38,7 +73,8 @@ export default class LandingPage extends React.Component {
             owner: 'owned',
             status: 'all',
             books: [],
-            username: ''
+            username: '',
+            loaded: false
         };
         this.updateOwnedFilter = this.updateOwnedFilter.bind(this);
         this.updateStatusFilter = this.updateStatusFilter.bind(this);
@@ -47,7 +83,7 @@ export default class LandingPage extends React.Component {
     async componentDidMount() {
         try {
             const value = await AsyncStorage.getItem('username');
-            this.setState({ username: 'Ritesh' }, this.updateList);
+            this.setState({ username: value }, this.updateList);
         } catch (error) {
             alert(error);
         }
@@ -56,29 +92,37 @@ export default class LandingPage extends React.Component {
         this.setState({ owner }, this.updateList);
     }
     updateStatusFilter(status) {
-        this.setState({ status });
+        this.setState({ status }, this.updateList);
     }
     updateList() {
+        const filterPostFix =
+            this.state.status === 'all' ? '' : `?filter=${this.state.status}`;
         const api =
             this.state.owner === 'owned'
                 ? 'search_by_owner'
                 : 'search_by_requester';
-        console.log(
-            `http://10.32.239.106:8080/entities/${api}/${this.state.username}`
-        );
+
         fetch(
-            `http://10.32.239.106:8080/entities/${api}/${this.state.username}`
+            `http://10.32.239.106:8080/entities/${api}/${
+                this.state.username
+            }${filterPostFix}`
         )
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 404) {
+                    return [];
+                }
+                return res.json();
+            })
             .then(books => {
-                this.setState({ books });
+                console.log(books);
+                this.setState({ books, loaded: true });
             });
     }
     render() {
         return (
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 <FormLabel>Filter By</FormLabel>
-                <View flexDirection="row" justifyContent="space-evenly">
+                <View flexDirection="row" justifyContent="flex-start">
                     <Picker
                         selectedValue={this.state.owner}
                         style={{ height: 50, width: '45%' }}
@@ -90,6 +134,7 @@ export default class LandingPage extends React.Component {
                         <Picker.Item label="Owned" value="owned" />
                         {/* <Picker.Item label="All" value="all" /> */}
                     </Picker>
+
                     <Picker
                         selectedValue={this.state.status}
                         style={{ height: 50, width: '45%' }}
@@ -97,11 +142,13 @@ export default class LandingPage extends React.Component {
                             this.updateStatusFilter(itemValue)
                         }
                     >
-                        <Picker.Item label="Sale" value="sale" />
-                        <Picker.Item label="Share" value="share" />
+                        <Picker.Item label="For Sale" value="SELL" />
+                        <Picker.Item label="For Share" value="SHARE" />
                         <Picker.Item label="All" value="all" />
                     </Picker>
                 </View>
+                {this.state.loaded &&
+                    !this.state.books.length && <Text>No books found</Text>}
                 {this.state.books.map(book => (
                     <Book key={book.name} {...book} />
                 ))}
@@ -117,16 +164,15 @@ export default class LandingPage extends React.Component {
                     color="#f50"
                     onPress={() => this.props.navigation.navigate('addBook')}
                 />
-            </View>
+            </ScrollView>
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff'
-        // alignItems: 'flex-start',
+        backgroundColor: '#fff',
+        alignItems: 'stretch'
         // justifyContent: 'center'
     }
 });
