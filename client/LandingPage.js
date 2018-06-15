@@ -164,6 +164,18 @@ export default class LandingPage extends React.Component {
                     color="#f50"
                     onPress={() => this.props.navigation.navigate('addBook')}
                 />
+                <Icon
+                    containerStyle={{
+                        position: 'absolute',
+                        right: 20,
+                        bottom: 80
+                    }}
+                    reverse
+                    raised
+                    name="search"
+                    color="#ccc"
+                    onPress={() => this.props.navigation.navigate('requests')}
+                />
             </ScrollView>
         );
     }
