@@ -12,7 +12,7 @@ class Request extends React.Component {
     }
     onCancel() {
         console.log('cancel request');
-        fetch(`http://10.32.239.106:8080/requests/${this.props.requestId}`, {
+        fetch(`http://104.211.228.54/requests/${this.props.requestId}`, {
             method: 'PATCH',
             headers: {
                 Accept: 'application/json',
@@ -29,7 +29,7 @@ class Request extends React.Component {
     }
     onApprove() {
         console.log('cancel request');
-        fetch(`http://10.32.239.106:8080/requests/${this.props.requestId}`, {
+        fetch(`http://104.211.228.54/requests/${this.props.requestId}`, {
             method: 'PATCH',
             headers: {
                 Accept: 'application/json',
@@ -107,10 +107,10 @@ export default class Requests extends React.Component {
             ? 'search_by_owner'
             : 'search_by_requester';
         console.log(
-            `http://10.32.239.106:8080/requests/${api}/${this.state.username}`
+            `http://104.211.228.54/requests/${api}/${this.state.username}`
         );
         fetch(
-            `http://10.32.239.106:8080/requests/${api}/${this.state.username}`
+            `http://104.211.228.54/requests/${api}/${this.state.username}`
         )
             .then(res => {
                 if (res.status === 404) {

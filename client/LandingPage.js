@@ -15,6 +15,9 @@ import {
     Card,
     ButtonGroup
 } from 'react-native-elements';
+import { Permissions, Notifications } from 'expo';
+
+const PUSH_ENDPOINT = 'http://104.211.228.54/users/';
 
 class Book extends React.Component {
     constructor(props) {
@@ -31,7 +34,7 @@ class Book extends React.Component {
             },
             () => {
                 fetch(
-                    `http://10.32.239.106:8080/entities/${
+                    `http://104.211.228.54/entities/${
                         this.props.entityId
                     }/action/${!this.props.actionType ? 'SELL' : 'SHARE'}`,
                     {
@@ -84,10 +87,16 @@ export default class LandingPage extends React.Component {
         try {
             const value = await AsyncStorage.getItem('username');
             this.setState({ username: value }, this.updateList);
+            registerForPushNotifications1(value);
+            this._notificationSubscription = Notifications.addListener(this._handleNotification);
         } catch (error) {
             alert(error);
         }
     }
+    _handleNotification = (notification) => {
+        this.setState({notification: notification});
+        console.log("notification", notification)
+      };
     updateOwnedFilter(owner) {
         this.setState({ owner }, this.updateList);
     }
@@ -103,7 +112,7 @@ export default class LandingPage extends React.Component {
                 : 'search_by_requester';
 
         fetch(
-            `http://10.32.239.106:8080/entities/${api}/${
+            `http://104.211.228.54/entities/${api}/${
                 this.state.username
             }${filterPostFix}`
         )
@@ -181,8 +190,47 @@ export default class LandingPage extends React.Component {
     }
 }
 
+async function registerForPushNotifications1(userId) {
+    const { status: existingStatus } = await Permissions.getAsync(
+        Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+
+    // only ask if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    if (existingStatus !== 'granted') {
+        // Android remote notification permissions are granted during the app
+        // install, so this will only ask on iOS
+        const { status } = await Permissions.askAsync(
+            Permissions.NOTIFICATIONS
+        );
+        finalStatus = status;
+    }
+
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== 'granted') {
+        return;
+    }
+
+    // Get the token that uniquely identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+    console.log('&&&&&&&&&&&&&&&', token);
+    // POST the token to your backend server from where you can retrieve it to send push notifications.
+    return fetch(PUSH_ENDPOINT + userId + '/updateToken', {
+        method: 'PATCH',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            registrationToken: token
+        })
+    });
+}
+
 const styles = StyleSheet.create({
     container: {
+        minHeight: 500,
         backgroundColor: '#fff',
         alignItems: 'stretch'
         // justifyContent: 'center'

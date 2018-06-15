@@ -57,7 +57,7 @@ export default class AddBook extends React.Component {
             );
     }
     addBook() {
-        fetch('http://10.32.239.106:8080/entities', {
+        fetch('http://104.211.228.54/entities', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

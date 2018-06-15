@@ -45,7 +45,7 @@ export default class NewUserForm extends React.Component {
                 {
                     text: 'OK',
                     onPress: () => {
-                        fetch('http://10.32.239.106:8080/users', {
+                        fetch('http://104.211.228.54/users', {
                             method: 'POST',
                             headers: {
                                 Accept: 'application/json',
@@ -58,14 +58,14 @@ export default class NewUserForm extends React.Component {
                                 location: 1,
                                 credits: 100
                             })
-                        }).then(
-                            res =>
-                                res.status === 200 &&
+                        }).then(res => {
+                            if (res.status === 200) {
                                 AsyncStorage.setItem(
                                     'username',
                                     this.state.name
-                                )
-                        );
+                                ).then(() => navigate('App'));
+                            }
+                        });
                     }
                 }
             ],
@@ -117,7 +117,11 @@ export default class NewUserForm extends React.Component {
                     // justifyContent="center"
                     style={{ width: '100%' }}
                 >
-                    <Button icon={{name: 'send'}} title="Submit" onPress={this.onSubmit} />
+                    <Button
+                        icon={{ name: 'send' }}
+                        title="Submit"
+                        onPress={this.onSubmit}
+                    />
                 </View>
             </KeyboardAvoidingView>
         );
@@ -126,7 +130,7 @@ export default class NewUserForm extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: '20px',
+        // paddingTop: '20px',
         flex: 1,
         backgroundColor: '#fff'
         // alignItems: 'flex-start',

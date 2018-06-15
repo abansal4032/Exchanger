@@ -7,17 +7,6 @@ import ScanBook from './ScanBook';
 import LandingPage from './LandingPage';
 import Requests from './Requests';
 import { Header, Icon } from 'react-native-elements';
-// import { withNavigation } from 'react-navigation';
-
-// const RightIcon = props => (
-//     <Icon
-//         name="search"
-//         color="#fff"
-//         onPress={props.navigation.navigate('addBook')}
-//     />
-// );
-
-// const RightIconWithNav = withNavigation(RightIcon);
 
 const AppStack = createStackNavigator({
     landingPage: {
@@ -56,9 +45,9 @@ const AppStack = createStackNavigator({
 class AuthLoadingScreen extends React.Component {
     async componentDidMount() {
         try {
-            // const value = await AsyncStorage.getItem('username');
-            await AsyncStorage.setItem('username', 'Avinash11');
-            this.props.navigation.navigate('App');
+            const value = await AsyncStorage.getItem('username');
+            // await AsyncStorage.setItem('username', 'Avinash11');
+            this.props.navigation.navigate(value ? 'App' : 'Auth');
         } catch (error) {
             alert(error);
         }
