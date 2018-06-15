@@ -9,7 +9,7 @@ type User struct {
 	Email             string `json:"email"`
 	Location          int    `json:"location"`
 	Credits           int    `json:"credits"`
-	RegistrationToken string `json:"-"`
+	RegistrationToken string `json:"registrationToken"`
 }
 
 type Entity struct {

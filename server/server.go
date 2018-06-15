@@ -61,5 +61,5 @@ func Start() {
 
 	http.Handle("/", middlewareChain().Final(router))
 
-	log.Fatal(http.ListenAndServe(":8080", http.DefaultServeMux))
+	log.Fatal(http.ListenAndServe(":80", http.DefaultServeMux))
 }
