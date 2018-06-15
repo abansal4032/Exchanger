@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, AsyncStorage } from 'react-native';
+import { StyleSheet,ScrollView, View, Text, Image, AsyncStorage } from 'react-native';
 import {
     FormLabel,
     FormInput,
@@ -24,6 +24,7 @@ export default class AddBook extends React.Component {
         this.addBook = this.addBook.bind(this);
     }
     setIsbn(isbn) {
+        alert(isbn);
         this.setState({ isbn });
     }
     async componentDidMount() {
@@ -78,12 +79,13 @@ export default class AddBook extends React.Component {
         }).then(res => {
             console.log(res);
             this.props.navigation.goBack();
+            this.props.navigation.state.params.updateList();
         });
     }
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <View style={styles.container} paddingTop={20}>
+            <ScrollView  paddingTop={20}>
                 <Button
                     title="Scan Barcode"
                     onPress={() =>
@@ -119,7 +121,7 @@ export default class AddBook extends React.Component {
                         <Button title="Add this book" onPress={this.addBook} />
                     </Card>
                 )}
-            </View>
+            </ScrollView>
         );
     }
 }

@@ -50,6 +50,7 @@ class Request extends React.Component {
             <Card>
                 <Text>{entity.name}</Text>
                 <Text>Owner - {entity.owner}</Text>
+                <Text>Requested by - {this.props.requester}</Text>
 
                 {type !== 'as-owner' ? (
                     <View flexDirection="row" alignSelf="flex-end">

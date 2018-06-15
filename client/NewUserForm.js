@@ -74,45 +74,49 @@ export default class NewUserForm extends React.Component {
     }
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container}>
-                <Header
-                    centerComponent={{
-                        text: 'Register',
-                        style: { color: '#fff' }
-                    }}
-                />
-                <FormLabel>Name</FormLabel>
-                <FormInput
-                    style={{ height: 40 }}
-                    onChangeText={name => this.setState({ name })}
-                    value={this.state.text}
-                />
-                <FormLabel>Alias</FormLabel>
-                <FormInput
-                    style={{ height: 40 }}
-                    onChangeText={alias => this.setState({ alias })}
-                    value={this.state.alias}
-                />
-                <FormLabel>Contact Number</FormLabel>
-                <FormInput
-                    style={{ height: 40 }}
-                    keyboardType="phone-pad"
-                    onChangeText={contactNo => this.setState({ contactNo })}
-                    value={this.state.contactNo}
-                />
-                <FormLabel>Points</FormLabel>
-                <FormInput
-                    style={{ height: 40 }}
-                    onChangeText={points => this.setState({ points })}
-                    value={this.state.points}
-                />
-                <FormLabel>Location</FormLabel>
-                <FormInput
-                    style={{ height: 40 }}
-                    onChangeText={location => this.setState({ location })}
-                    value={this.state.location}
-                />
-                <View
+             <View style={styles.container}>      
+            
+                  <Header
+                      centerComponent={{
+                          text: 'Register',
+                          style: { color: '#fff' }
+                      }}
+                  />
+                  <FormLabel>Name</FormLabel>
+                  <FormInput
+                      style={{ height: 40 }}
+                      onChangeText={name => this.setState({ name })}
+                      value={this.state.name}
+                  />
+
+                  <FormLabel>Alias</FormLabel>
+                  <FormInput
+                      style={{ height: 40 }}
+                      onChangeText={alias => this.setState({ alias })}
+                      value={this.state.alias}
+                  />
+                  <FormLabel>Contact Number</FormLabel>
+                  <FormInput
+                      style={{ height: 40 }}
+                      keyboardType="phone-pad"
+                      onChangeText={contactNo => this.setState({ contactNo })}
+                      value={this.state.contactNo}
+                  />
+                  {/* <FormLabel>Points</FormLabel>
+                  <FormInput
+                      style={{ height: 40 }}
+                      onChangeText={points => this.setState({ points })}
+                      value={this.state.points}
+                  />
+
+                 <FormLabel>Location</FormLabel>
+                 <FormInput
+                     style={{ height: 40 }}
+                     onChangeText={location => this.setState({ location })}
+                     value={this.state.location}
+                 /> */}
+                
+            <View
                     // flexDirection="row"
                     // justifyContent="center"
                     style={{ width: '100%' }}
@@ -123,7 +127,8 @@ export default class NewUserForm extends React.Component {
                         onPress={this.onSubmit}
                     />
                 </View>
-            </KeyboardAvoidingView>
+
+            </View>
         );
     }
 }

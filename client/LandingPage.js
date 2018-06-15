@@ -13,7 +13,8 @@ import {
     Icon,
     FormLabel,
     Card,
-    ButtonGroup
+    ButtonGroup,
+    Button
 } from 'react-native-elements';
 import { Permissions, Notifications } from 'expo';
 
@@ -26,6 +27,7 @@ class Book extends React.Component {
             selectedIndex: this.props.actionType === 'SELL' ? 0 : 1
         };
         this.updateSaleOrShare = this.updateSaleOrShare.bind(this);
+        this.releaseBook = this.releaseBook.bind(this);
     }
     updateSaleOrShare(selectedIndex) {
         this.setState(
@@ -44,6 +46,11 @@ class Book extends React.Component {
             }
         );
     }
+    releaseBook() {
+        fetch(`http://104.211.228.54/entities/${this.props.entityId}/release`, {
+            method: 'PATCH'
+        }).then(this.props.updateList);
+    }
     render() {
         console.log(this.props);
         return (
@@ -57,12 +64,16 @@ class Book extends React.Component {
                     }}
                     resizeMode="cover"
                 />
-                <ButtonGroup
-                    selectedIndex={this.state.selectedIndex}
-                    onPress={this.updateSaleOrShare}
-                    buttons={['For Sale', 'For Share']}
-                    containerStyle={{ height: 30, width: 200 }}
-                />
+                {this.props.bookStatus === 'owned' ? (
+                    <ButtonGroup
+                        selectedIndex={this.state.selectedIndex}
+                        onPress={this.updateSaleOrShare}
+                        buttons={['For Sale', 'For Share']}
+                        containerStyle={{ height: 30, width: 200 }}
+                    />
+                ) : (
+                    <Button title="Release" onPress={this.releaseBook} />
+                )}
                 <Text>Status: {this.props.status}</Text>
             </Card>
         );
@@ -88,15 +99,17 @@ export default class LandingPage extends React.Component {
             const value = await AsyncStorage.getItem('username');
             this.setState({ username: value }, this.updateList);
             registerForPushNotifications1(value);
-            this._notificationSubscription = Notifications.addListener(this._handleNotification);
+            this._notificationSubscription = Notifications.addListener(
+                this._handleNotification
+            );
         } catch (error) {
             alert(error);
         }
     }
-    _handleNotification = (notification) => {
-        this.setState({notification: notification});
-        console.log("notification", notification)
-      };
+    _handleNotification = notification => {
+        this.setState({ notification: notification });
+        console.log('notification', notification);
+    };
     updateOwnedFilter(owner) {
         this.setState({ owner }, this.updateList);
     }
@@ -159,7 +172,12 @@ export default class LandingPage extends React.Component {
                 {this.state.loaded &&
                     !this.state.books.length && <Text>No books found</Text>}
                 {this.state.books.map(book => (
-                    <Book key={book.name} {...book} />
+                    <Book
+                        key={book.name}
+                        {...book}
+                        bookStatus={this.state.owner}
+                        updateList={this.updateList}
+                    />
                 ))}
                 <Icon
                     containerStyle={{
@@ -171,7 +189,11 @@ export default class LandingPage extends React.Component {
                     raised
                     name="add"
                     color="#f50"
-                    onPress={() => this.props.navigation.navigate('addBook')}
+                    onPress={() =>
+                        this.props.navigation.navigate('addBook', {
+                            updateList: this.updateList
+                        })
+                    }
                 />
                 <Icon
                     containerStyle={{
@@ -183,6 +205,18 @@ export default class LandingPage extends React.Component {
                     raised
                     name="search"
                     color="#ccc"
+                    onPress={() => this.props.navigation.navigate('searchBook')}
+                />
+                <Icon
+                    containerStyle={{
+                        position: 'absolute',
+                        right: 20,
+                        bottom: 140
+                    }}
+                    reverse
+                    raised
+                    name="beenhere"
+                    color="#f50"
                     onPress={() => this.props.navigation.navigate('requests')}
                 />
             </ScrollView>

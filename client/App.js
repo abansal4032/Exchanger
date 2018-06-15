@@ -7,6 +7,7 @@ import ScanBook from './ScanBook';
 import LandingPage from './LandingPage';
 import Requests from './Requests';
 import { Header, Icon } from 'react-native-elements';
+import BookSearchForm from './BookSearchForm';
 
 const AppStack = createStackNavigator({
     landingPage: {
@@ -39,6 +40,19 @@ const AppStack = createStackNavigator({
         navigationOptions: () => ({
             title: 'Pending Requests'
         })
+    },
+    searchBook: {
+        screen: BookSearchForm,
+        navigationOptions: () => ({
+            header: (
+                <Header
+                    centerComponent={{
+                        text: 'Explore',
+                        style: { color: '#fff' }
+                    }}
+                />
+            )
+        })
     }
 });
 
@@ -46,7 +60,6 @@ class AuthLoadingScreen extends React.Component {
     async componentDidMount() {
         try {
             const value = await AsyncStorage.getItem('username');
-            // await AsyncStorage.setItem('username', 'Avinash11');
             this.props.navigation.navigate(value ? 'App' : 'Auth');
         } catch (error) {
             alert(error);
